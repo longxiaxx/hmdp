@@ -89,6 +89,7 @@ public class VoucherOrderServiceImpl extends ServiceImpl<VoucherOrderMapper, Vou
         voucherOrder.setUserId(userId);
         // 7.3.优惠券id
         voucherOrder.setVoucherId(voucherId);
+        save(voucherOrder);
         // 8.返回订单id
         return Result.ok(orderId);
     }

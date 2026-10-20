@@ -1,7 +1,6 @@
 package com.hmdp.controller;
 
 
-import cn.hutool.core.util.BooleanUtil;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.hmdp.dto.Result;
 import com.hmdp.dto.UserDTO;
@@ -82,11 +81,11 @@ public class BlogController {
             blog.setName(user.getNickName());
             blog.setIcon(user.getIcon());
             // 1. 获取登录用户
-            Long loginUserId = UserHolder.getUser().getId();
+            //Long loginUserId = UserHolder.getUser().getId();
             // 2. 判断当前用户是否已经点赞
             String key = BLOG_LIKED_KEY + blog.getId();
-            Boolean isMember = stringRedisTemplate.opsForSet().isMember(key, loginUserId.toString());
-            blog.setIsLike(BooleanUtil.isTrue(isMember));
+            Double score = stringRedisTemplate.opsForZSet().score(key, userId.toString());
+            blog.setIsLike(score != null);
         });
         return Result.ok(records);
     }
@@ -94,6 +93,9 @@ public class BlogController {
     @GetMapping("/{id}")
     public Result queryBlogById(@PathVariable("id") Long id) {
         return blogService.queryBlogById(id);
-
+    }
+    @GetMapping("/likes/{id}")
+    public Result queryBlogLikes(@PathVariable("id") Long id) {
+        return blogService.queryBlogLikes(id);
     }
 }
